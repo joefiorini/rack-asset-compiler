@@ -6,6 +6,11 @@ Gem::Specification.new do |s|
   s.summary = 'Rack Middleware to facilitate the generic compiling static assets.'
   s.homepage = 'http://www.github.com/jbaudanza/rack-asset-compiler'
   s.add_dependency 'rack'
+
+  s.add_development_dependency 'rspec'
+  s.add_development_dependency 'rack-test'
+  s.add_development_dependency 'coffee-script'
+
   s.files =  [ "rack-asset-compiler.gemspec", "Rakefile", "README.md", "LICENSE.txt" ]
   s.files += Dir['lib/rack/*.rb'] + Dir['spec/**/*']
   s.files += [ "examples/jasmine_config.rb" ]
