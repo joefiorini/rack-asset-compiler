@@ -14,10 +14,6 @@ module Rack
         :cache => ENV['RACK_ENV'] == 'production'
       }.merge(options)
 
-      %w(source_extension content_type).each do |field|
-        raise "Missing required option :#{field}" unless options.has_key?(field.to_sym)
-      end
-
       @compiler = options[:compiler]
       @source_dir = options[:source_dir]
       @url = options[:url]
@@ -60,8 +56,10 @@ module Rack
         # Directory listsings not supported
         return response( 403, 'Forbidden') if F.directory? F.join(source_dir, request_base)
 
-        # Swap in the source file extension
-        request_base[-1].sub!(/\.\w+$/, '.' + source_extension)
+        if source_extension
+          # Swap in the source file extension if given
+          request_base[-1].sub!(/\.\w+$/, '.' + source_extension)
+        end
         source_file = F.join(source_dir, request_base)
 
         if F.exists?(source_file)
@@ -76,8 +74,10 @@ module Rack
 
           body = compile(source_file)
 
+          content_type = @content_type || Rack::Mime.mime_type(::File.extname(source_file))
+
           headers = {
-            'Content-Type' => @content_type,
+            'Content-Type' => content_type,
             'Content-Length' => body.length.to_s,
             'Last-Modified' => last_modified_time.httpdate
           }

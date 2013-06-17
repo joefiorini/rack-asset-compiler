@@ -31,11 +31,18 @@ describe "AssetCompiler" do
     }
   end
 
-  it "should raise an error if required options are missing" do
+  it "no longer raises an error if content_type is missing" do
     lambda {
       @options.delete(:content_type)
       get '/oops'
-    }.should raise_error
+    }.should_not raise_error
+  end
+
+  it "uses registered mime type for extension as default content type" do
+    @options.delete(:content_type)
+    @options.delete(:source_extension)
+    get '/chickenscripts/blah.png'
+    last_response.content_type.should == Rack::Mime.mime_type('.png')
   end
 
   it "should match files directly beneath the URL" do
