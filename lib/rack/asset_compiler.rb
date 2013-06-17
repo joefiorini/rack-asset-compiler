@@ -78,7 +78,6 @@ module Rack
 
           headers = {
             'Content-Type' => content_type,
-            'Content-Length' => body.length.to_s,
             'Last-Modified' => last_modified_time.httpdate
           }
 
