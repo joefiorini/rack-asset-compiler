@@ -63,28 +63,12 @@ module Rack
         source_file = F.join(source_dir, request_base)
 
         if F.exists?(source_file)
-          last_modified_time = F.mtime(source_file)
-
-          if env['HTTP_IF_MODIFIED_SINCE']
-            cached_time = Time.parse(env['HTTP_IF_MODIFIED_SINCE'])
-            if last_modified_time <= cached_time
-              return [304, {}, ["Not modified\r\n"]]
-            end
-          end
-
           body = compile(source_file)
 
-          content_type = @content_type || Rack::Mime.mime_type(::File.extname(source_file))
-
           headers = {
-            'Content-Type' => content_type,
-            'Last-Modified' => last_modified_time.httpdate
+            'Content-Type' => @content_type,
+            'Content-Length' => body.length.to_s
           }
-
-          if @cache_ttl
-            headers['Expires'] = (Time.now + @cache_ttl).strftime('%a, %d %b %Y %H:%M:%S GMT')
-            headers['Cache-Control'] = "public,max-age=#{@cache_ttl}"
-          end
 
           return [200, headers, [body]]
         end
@@ -92,5 +76,6 @@ module Rack
 
       @app.call(env)
     end
+
   end
 end
