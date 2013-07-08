@@ -66,8 +66,7 @@ module Rack
           body = compile(source_file)
 
           headers = {
-            'Content-Type' => @content_type,
-            'Content-Length' => body.length.to_s
+            'Content-Type' => @content_type
           }
 
           return [200, headers, [body]]
