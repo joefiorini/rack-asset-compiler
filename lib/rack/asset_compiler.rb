@@ -65,6 +65,8 @@ module Rack
         if F.exists?(source_file)
           body = compile(source_file)
 
+          @content_type ||= Rack::Mime.mime_type(F.extname(source_file))
+
           headers = {
             'Content-Type' => @content_type
           }
